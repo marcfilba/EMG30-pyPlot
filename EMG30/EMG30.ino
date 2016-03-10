@@ -88,7 +88,7 @@ void printData (){
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin (115200);
   
   pinMode(MOTOR_ENABLE, OUTPUT);
   pinMode(MOTOR_LEFT,   OUTPUT);
@@ -124,19 +124,19 @@ void loop() {
     error = desiredRPM - realRPM;
 
     // integralError=integralError+error;
-    integralError = integralError + (desiredRPM - realRPM);    
+    integralError += (desiredRPM - realRPM);    
 
     // controlSignal=Kp*error+Ki*IntegralError;
     correctedRPM = desiredRPM + ((Kp * error) + (Ki * integralError));
 
     // applyInActuators(controlSignal);
-    analogWrite (MOTOR_ENABLE, min(correctedRPM,255));
+    analogWrite (MOTOR_ENABLE, max (min (correctedRPM, 255), 0));
 
     // en cas d'overflow, corregim els càlculs fets
-    if (correctedRPM > 255) integralError -= (desiredRPM - realRPM);
+    if (correctedRPM > 255 or correctedRPM < 0) integralError -= (desiredRPM - realRPM);
 
     printData ();
   }
 
-  delay (100);
+  delay (150);
 }

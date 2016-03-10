@@ -5,37 +5,42 @@ import numpy as np
 from sys import stdin
 from matplotlib import pyplot as plt
 
-serialPort = '/dev/ttyACM0'
-baudRate = 9600
+serialPort = '/dev/ttyACM1'
+baudRate = 115200
 
 ser = serial.Serial(serialPort, baudRate)
 
+plt.gcf().set_size_inches(15, 7, forward=True)
 plt.ion() # set plot to animated
 
-desiredRPM = [0] * 50
-realRPM = [0] * 50
-correctedRPM = [0] * 50
+desiredRPM    = [0] * 50
+realRPM       = [0] * 50
+correctedRPM  = [0] * 50
 
-error = [0] * 50
+error         = [0] * 50
 
 integralError = [0] * 50
 
 ax1 = plt.axes()
 
 plt.figure(1).subplots_adjust(hspace = .5)
-
+plt.gcf().set_size_inches(15, 7, forward=True)
 plt.subplot(311).set_title("RPM's")
-dRPM, = plt.plot(desiredRPM)
-rRPM, = plt.plot(realRPM)
-cRPM, = plt.plot(correctedRPM)
+
+dRPM, = plt.plot(desiredRPM, label = "desired RPM")
+rRPM, = plt.plot(realRPM, label = "real RPM")
+cRPM, = plt.plot(correctedRPM, label = "corrected RPM")
+plt.legend(loc='center left', bbox_to_anchor=(-0.155, 0.5), prop={'size':9})
 
 plt.subplot(312).set_title("Error")
-err, = plt.plot(error)
+err, = plt.plot(error, label = "error")
+plt.legend(loc='center left', bbox_to_anchor=(-0.155, 0.5), prop={'size':9})
 
 plt.subplot(313).set_title("Integral Error")
-inErr, = plt.plot(integralError)
+inErr, = plt.plot(integralError, label = "integral error")
+plt.legend(loc='center left', bbox_to_anchor=(-0.155, 0.5), prop={'size':9})
 
-plt.ylim([0,0])
+plt.ylim([0,1])
 
 rawData = ''
 rawDataSplitted = []
@@ -51,8 +56,8 @@ while True:
 		rawData = ser.readline().rstrip()	# llegim accel, gyro i temp
 		rawDataSplitted = rawData.split (",")
 
-		#if len (rawDataSplitted) != 7:
-		print rawData
+		if " " in rawData:
+			print rawData
 	else:
 		read = False
 
